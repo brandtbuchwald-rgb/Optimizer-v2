@@ -306,7 +306,7 @@ els.cls.value=els.cls.value||"Sorcerer"; els.weap.value=els.weap.value||"Origina
 
 function wireSeg(segId, selectEl){const seg=document.getElementById(segId); seg?.addEventListener('click', e=>{const btn=e.target.closest('button'); if(!btn) return; seg.querySelectorAll('button').forEach(b=>b.classList.remove('is-active')); btn.classList.add('is-active'); selectEl.value=btn.dataset.val; recalc();});}
 wireSeg('classSeg', els.cls); wireSeg('weaponSeg', document.getElementById('weap')); wireSeg('optSetSeg', els.optSet);
-
+wireSeg('focusSeg', document.getElementById('focus'));
 // Fury toggle
 const furyRow=document.getElementById("furyRow");
 document.getElementById('furyBtn')?.addEventListener('click', ()=>{const btn=document.getElementById('furyBtn'); const on=btn.getAttribute('data-on')==='1'; btn.setAttribute('data-on', on?'0':'1'); els.fury.checked=!on; btn.textContent=els.fury.checked?'On':'Off'; btn.classList.toggle('is-active', els.fury.checked); recalc();});
