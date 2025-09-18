@@ -71,7 +71,7 @@ slots.forEach(slot=>{
 function renderGearSet(tier, focus){
   const plan = buildGearSet(tier, focus);
   const container = document.createElement("div");
-  container.className = "card";
+  container.className = "card gear-card"; // <-- add gear-card here
   container.innerHTML = `<div class="inner">
     <h2>Gear Layout (${tier} – ${focus})</h2>
     ${Object.entries(plan).map(([slot, lines])=>`
