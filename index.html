@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Rediscover ATK SPD Calculator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-title" content="EHT Calc" />
+
+<link rel="icon" href="assets/favicon.ico?v=26">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon.png?v=26">
+<link rel="apple-touch-icon" href="assets/favicon.png?v=26">
+
+<meta property="og:site_name" content="Rediscover ATK SPD Calculator">
+<meta property="og:title" content="Rediscover ATK SPD Calculator">
+<meta property="og:description" content="A sleek RPG-styled Attack Speed calculator + optimizer for Evil Hunter Tycoon.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://rediscover-guilds.github.io/Redi-ATKSPD-Calc-V2/">
+<meta property="og:image" content="https://rediscover-guilds.github.io/Redi-ATKSPD-Calc-V2/assets/preview.jpg?v=26">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Rediscover ATK SPD Calculator">
+<meta name="twitter:description" content="A sleek RPG-styled Attack Speed calculator + optimizer for Evil Hunter Tycoon.">
+<meta name="twitter:image" content="https://rediscover-guilds.github.io/Redi-ATKSPD-Calc-V2/assets/preview.jpg?v=26">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#0c0f14; --bg2:#121826; --ink:#e8ecf8; --muted:#a8b0c2;
+  --accent:#c6a15b; --accent2:#fcd34d; --setGlow:rgba(198,161,91,.45);
+  --card:rgba(19,24,37,0.82); --border:rgba(255,255,255,0.08);
+  --shadowA:0 10px 30px rgba(0,0,0,.4);
+  --shadowB:inset 0 1px 0 rgba(255,255,255,.06), inset 0 -1px 0 rgba(0,0,0,.4);
+  --gradHead:linear-gradient(90deg,#3b2e13,#5a4516);
+  --gradCard:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,0));
+  --barBG:rgba(255,255,255,.06); --good:#22c55e; --warn:#f59e0b;
+  --glow:0 0 0 2px var(--setGlow), 0 0 22px var(--setGlow);
+}
+.theme-Abyss{ --accent:#7c3aed; --accent2:#a78bfa; --setGlow:rgba(124,58,237,.45); --gradHead:linear-gradient(90deg,#24143e,#3d2372); }
+.theme-Chaos{ --accent:#14b8a6; --accent2:#2dd4bf; --setGlow:rgba(20,184,166,.45); --gradHead:linear-gradient(90deg,#0d544e,#0f766e); }
+.theme-Original{ --accent:#ef4444; --accent2:#f87171; --setGlow:rgba(239,68,68,.45); --gradHead:linear-gradient(90deg,#7a1520,#b91c1c); }
+.theme-Primal{ --accent:#c6a15b; --accent2:#fcd34d; --setGlow:rgba(198,161,91,.45); --gradHead:linear-gradient(90deg,#3b2e13,#5a4516); }
+
+*{box-sizing:border-box} .hidden{display:none!important}
+html,body{height:100%}
+body{
+  margin:0;color:var(--ink); font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,sans-serif;
+  background: radial-gradient(1200px 600px at -10% -20%, rgba(102,153,255,.12), transparent 60%),
+              radial-gradient(1000px 700px at 110% -10%, rgba(198,161,91,.12), transparent 50%),
+              linear-gradient(180deg, var(--bg), var(--bg2));
+}
+header{ position:sticky; top:0; z-index:50; background:var(--gradHead); color:#fff;
+  padding:18px 16px; border-bottom:1px solid var(--border); box-shadow:var(--shadowA);}
+header h1{ margin:0; font-size:20px; letter-spacing:.5px; font-family:Cinzel,serif; }
+header small{opacity:.8}
+main{max-width:1000px; margin:18px auto; padding:0 16px 120px;}
+
+.card{
+  background: radial-gradient(600px 300px at 30% -10%, rgba(255,255,255,.08), transparent 60%),
+              radial-gradient(500px 260px at 100% -10%, rgba(198,161,91,.10), transparent 60%),
+              repeating-linear-gradient(45deg, rgba(198,161,91,.03) 0 6px, rgba(198,161,91,.06) 6px 12px),
+              var(--card);
+  border:1px solid var(--border); border-radius:16px; box-shadow:var(--shadowA); overflow:hidden; position:relative;
+}
+.card::before{content:""; position:absolute; inset:0; background:var(--gradCard); pointer-events:none;}
+.card>.inner{ padding:16px; }
+h2{font-size:15px; color:var(--muted); margin:0 0 10px 4px; font-weight:700; letter-spacing:.2px; text-transform:uppercase}
+.section{display:grid; grid-template-columns:260px 1fr; gap:12px; align-items:center;}
+.row{display:contents;} label{color:var(--muted); font-weight:700}
+
+select,input[type="number"],input[readonly]{ width:100%; padding:12px 14px; border-radius:12px; border:1px solid var(--border);
+  background:rgba(255,255,255,.06); color:var(--ink); font-weight:700; backdrop-filter:blur(8px); box-shadow:var(--shadowB);}
+.pct{position:relative}.pct input{padding-right:40px}
+.suffix{position:absolute; right:10px; top:50%; transform:translateY(-50%); color:var(--muted); font-weight:800}
+
+.seg{display:flex; gap:8px; flex-wrap:wrap}
+.seg button,.btn{ appearance:none; border:1px solid var(--border);
+  background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.03)); color:var(--ink);
+  border-radius:12px; padding:10px 12px; font-weight:800; cursor:pointer; box-shadow:var(--shadowB);
+  display:flex; align-items:center; gap:8px; transition:box-shadow .2s, outline-color .2s, background .2s;}
+.seg button.is-active{ outline:2px solid color-mix(in oklab, var(--accent) 45%, transparent);
+  background:linear-gradient(180deg, color-mix(in oklab, var(--accent) 25%, transparent), rgba(255,255,255,.06));}
+#weaponSeg button.is-active{ box-shadow:var(--glow), var(--shadowB); }
+
+.icon{width:18px;height:18px;display:inline-block;border-radius:4px}
+.icon.bers{background:conic-gradient(from 45deg,#d97706,#f59e0b,#facc15);}
+.icon.pala{background:conic-gradient(from 45deg,#60a5fa,#93c5fd,#c7d2fe);}
+.icon.rang{background:conic-gradient(from 45deg,#34d399,#10b981,#059669);}
+.icon.sorc{background:conic-gradient(from 45deg,#a78bfa,#8b5cf6,#7c3aed);}
+
+.btn{ background:linear-gradient(180deg, color-mix(in oklab, var(--accent) 45%, transparent), color-mix(in oklab, var(--accent) 15%, transparent));
+  outline:2px solid color-mix(in oklab, var(--accent) 35%, transparent);}
+.btn:active{transform:translateY(1px)}
+
+.bar{height:16px; background:var(--barBG); border-radius:999px; overflow:hidden; position:relative}
+.bar>div{height:100%; width:0%; background:linear-gradient(90deg, var(--accent), var(--accent2)); transition:width .25s}
+.bar.hit::after{content:""; position:absolute; inset:0; background:linear-gradient(120deg, rgba(255,255,255,.0) 20%, rgba(255,255,255,.45) 50%, rgba(255,255,255,.0) 80%);
+  transform:translateX(-100%); animation:shimmer 1.5s ease-out 1;}
+@keyframes shimmer{to{transform:translateX(100%)}}
+.bar.good>div{background:linear-gradient(90deg, var(--good), #16a34a)}
+.bar.warn>div{background:linear-gradient(90deg, var(--warn), #d97706)}
+.muted{color:var(--muted); font-size:.95rem}
+
+.stats{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+.stat{border-radius:14px; padding:14px; border:1px solid var(--border); background:rgba(255,255,255,.06); box-shadow:var(--shadowB)}
+.stat label{color:var(--muted); font-size:.9rem; margin-bottom:6px; display:block}
+.stat .value input{font-size:22px; padding:14px}
+
+footer{ position:fixed; bottom:0; left:0; width:100%;
+  text-align:center; background:linear-gradient(90deg, rgba(0,0,0,.3), rgba(0,0,0,.5));
+  color:#fff; padding:10px 12px; font-size:13px; z-index:50; backdrop-filter: blur(6px);}
+@media(max-width:780px){ .section,.stats{grid-template-columns:1fr} }
+</style>
+</head>
+
+<body class="theme-Primal">
+<header>
+  <h1>Rediscover ATK SPD Calculator <small>RPG</small></h1>
+</header>
+
+<main>
+  <!-- Base & Buffs -->
+  <div class="card"><div class="inner">
+    <h2>Base &amp; Buffs</h2>
+    <div class="section">
+      <div class="row">
+        <label>Class</label>
+        <div class="seg" id="classSeg">
+          <button type="button" data-val="Berserker"><span class="icon bers"></span> Berserker</button>
+          <button type="button" data-val="Paladin"><span class="icon pala"></span> Paladin</button>
+          <button type="button" data-val="Ranger"><span class="icon rang"></span> Ranger</button>
+          <button type="button" data-val="Sorcerer" class="is-active"><span class="icon sorc"></span> Sorcerer</button>
+        </div>
+        <select id="cls" class="hidden"></select>
+      </div>
+
+      <div class="row">
+        <label>Weapon</label>
+        <div class="seg" id="weaponSeg">
+          <button type="button" data-val="Original" class="is-active">Original</button>
+          <button type="button" data-val="Primal">Primal</button>
+          <button type="button" data-val="Chaos">Chaos</button>
+          <button type="button" data-val="Abyss">Abyss</button>
+          <button type="button" data-val="PVP/Boss">PVP/Boss</button>
+        </div>
+        <select id="weap" class="hidden"></select>
+      </div>
+
+      <div class="row">
+        <label>Characteristic</label>
+        <select id="char">
+          <option value="0">None</option>
+          <option value="7" selected>Heroic (+7%)</option>
+          <option value="10">Swift (+10%)</option>
+        </select>
+      </div>
+
+      <div class="row">
+        <label>Atk SPD Colour</label>
+        <select id="col">
+          <option value="0">Normal (+0%)</option>
+          <option value="10">Blue (+10%)</option>
+          <option value="20">Orange (+20%)</option>
+          <option value="30" selected>Purple (+30%)</option>
+        </select>
+      </div>
+
+      <div class="row">
+        <label>Guild Buff</label>
+        <div class="pct"><input id="guild" type="number" inputmode="decimal" step="0.1" value="5"><span class="suffix">%</span></div>
+      </div>
+
+      <div class="row">
+        <label>Secret Tech</label>
+        <div class="pct"><input id="secret" type="number" inputmode="decimal" step="0.1" value="10"><span class="suffix">%</span></div>
+      </div>
+
+      <div class="row">
+        <label>Equipment ATK SPD</label>
+        <div class="pct"><input id="equip" type="number" inputmode="decimal" step="0.1" value="0"><span class="suffix">%</span></div>
+      </div>
+
+      <div class="row">
+        <label>Rune ATK SPD</label>
+        <div class="pct"><input id="rune" type="number" inputmode="decimal" step="0.1" value="0"><span class="suffix">%</span></div>
+      </div>
+
+      <div class="row">
+        <label>Pet Gear</label>
+        <select id="pet">
+          <option value="0">None</option>
+          <option value="6">B (6%)</option>
+          <option value="9">A (9%)</option>
+          <option value="12">S (12%)</option>
+        </select>
+      </div>
+
+      <input id="target" type="hidden" value="0.25">
+
+      <div class="row">
+        <label>Quicken</label>
+        <select id="quicken">
+          <option value="0">None</option>
+          <option value="1">Lv.1 (+1%)</option>
+          <option value="2">Lv.2 (+2%)</option>
+          <option value="3">Lv.3 (+3%)</option>
+          <option value="4">Lv.4 (+4%)</option>
+          <option value="5">Lv.5 (+5%)</option>
+        </select>
+      </div>
+
+      <div class="row" id="furyRow">
+        <label>Fury Lv.10</label>
+        <div class="seg"><button type="button" id="furyBtn" data-on="0">Off</button></div>
+        <input id="fury" type="checkbox" class="hidden">
+      </div>
+    </div>
+
+    <div style="margin-top:12px" class="section">
+      <div class="row" style="grid-column:1 / -1">
+        <div class="bar" id="pbar"><div id="progressFill"></div></div>
+        <div class="muted" id="progressText">Progress: —</div>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <label>Required ATK SPD</label>
+        <div class="value pct"><input id="requiredBox" type="number" readonly><span class="suffix">%</span></div>
+      </div>
+      <div class="stat">
+        <label>Final ATK SPD</label>
+        <div class="value"><input id="finalBox" type="number" readonly></div>
+      </div>
+    </div>
+  </div></div>
+
+  <!-- Optimizer -->
+  <div class="card"><div class="inner">
+    <h2>Optimizer</h2>
+    <div class="section">
+      <div class="row">
+        <label>Optimize for Set</label>
+        <div class="seg" id="optSetSeg">
+          <button type="button" data-val="Abyss" class="is-active">Abyss</button>
+          <button type="button" data-val="Chaos">Chaos</button>
+          <button type="button" data-val="Original">Original</button>
+          <button type="button" data-val="Primal">Primal</button>
+        </div>
+        <select id="optSet" class="hidden"></select>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin:12px 0">
+      <button class="btn" id="applyBest">Apply Optimal</button>
+    </div>
+
+    <div id="bestLine" style="font-weight:800;margin-bottom:6px">—</div>
+    <div id="bestWaste" class="muted" style="margin-bottom:10px">—</div>
+    <h2 style="margin-top:8px">Alternates</h2>
+    <ul id="altList" style="margin:8px 0 0 18px"></ul>
+  </div></div>
+</main>
+
+<footer>
+  Guild – <strong>Rediscover Alliance</strong> | Creator – <strong>SAGE</strong><br>
+  <span style="font-size:12px;opacity:.75">Build v2.6</span>
+</footer>
+
+<script>
+// Data
+const baseOriginal={"Berserker":2.0,"Paladin":2.4,"Ranger":1.8,"Sorcerer":2.2};
+const basePrimal={"Berserker":2.0,"Paladin":2.4,"Ranger":1.8,"Sorcerer":2.2};
+const basePvP={"Berserker":2.2,"Paladin":2.5,"Ranger":2.0,"Sorcerer":2.3};
+const base={"Original":baseOriginal,"Primal":basePrimal,"Chaos":baseOriginal,"Abyss":basePrimal,"PVP/Boss":basePvP};
+const TARGET_FINAL=0.25;
+const SET_VAL={Abyss:0.16,Chaos:0.14,Original:0.12,Primal:0.12};
+const MAX_EQUIP_PIECES=8;
+
+// Elements
+const els=(ids=>ids.reduce((o,id)=>(o[id]=document.getElementById(id),o),{}))(
+  ["cls","weap","char","col","guild","secret","equip","rune","quicken","fury","pet",
+   "progressFill","progressText","requiredBox","finalBox","furyBtn","pbar",
+   "bestLine","bestWaste","altList","applyBest","optSet"]
+);
+
+// Build selects for segmented controls
+["Berserker","Paladin","Ranger","Sorcerer"].forEach(v=>{if(!els.cls.querySelector(`option[value='${v}']`)){const o=document.createElement('option');o.value=v;o.text=v;els.cls.appendChild(o);}});
+["Original","Primal","Chaos","Abyss","PVP/Boss"].forEach(v=>{const s=document.getElementById('weap');if(!s.querySelector(`option[value='${v}']`)){const o=document.createElement('option');o.value=v;o.text=v;s.appendChild(o);}});
+["Abyss","Chaos","Original","Primal"].forEach(v=>{if(!els.optSet.querySelector(`option[value='${v}']`)){const o=document.createElement('option');o.value=v;o.text=v;els.optSet.appendChild(o);}});
+els.cls.value=els.cls.value||"Sorcerer"; els.weap.value=els.weap.value||"Original"; els.optSet.value=els.optSet.value||"Abyss";
+
+function wireSeg(segId, selectEl){const seg=document.getElementById(segId); seg?.addEventListener('click', e=>{const btn=e.target.closest('button'); if(!btn) return; seg.querySelectorAll('button').forEach(b=>b.classList.remove('is-active')); btn.classList.add('is-active'); selectEl.value=btn.dataset.val; recalc();});}
+wireSeg('classSeg', els.cls); wireSeg('weaponSeg', document.getElementById('weap')); wireSeg('optSetSeg', els.optSet);
+
+// Fury toggle
+const furyRow=document.getElementById("furyRow");
+document.getElementById('furyBtn')?.addEventListener('click', ()=>{const btn=document.getElementById('furyBtn'); const on=btn.getAttribute('data-on')==='1'; btn.setAttribute('data-on', on?'0':'1'); els.fury.checked=!on; btn.textContent=els.fury.checked?'On':'Off'; btn.classList.toggle('is-active', els.fury.checked); recalc();});
+
+// Helpers
+const clamp=(x,min,max)=>Math.max(min,Math.min(max,x));
+const pctInput=id=>(parseFloat(els[id].value||0)/100);
+const pctSelect=id=>(parseFloat(els[id].value||0)/100);
+const fmtPct=f=>(f*100).toFixed(2)+'%';
+const applyTheme=()=>{const b=document.body; b.classList.remove('theme-Abyss','theme-Chaos','theme-Original','theme-Primal'); b.classList.add('theme-'+els.optSet.value);};
+
+function currentState(includeEquipRune=true){
+  const cls=els.cls.value, weap=els.weap.value, baseSpd=base[weap][cls];
+  const char=pctSelect('char'), color=pctSelect('col'), guild=pctInput('guild'), secret=pctInput('secret');
+  const equip=includeEquipRune?pctInput('equip'):0, rune=includeEquipRune?pctInput('rune'):0, petPct=pctSelect('pet');
+  const quick=(parseFloat(els.quicken.value||0)/100); const fury=(els.fury.checked&&cls==='Berserker')?0.25:1.0;
+  const buffsBase=char+color+guild+secret; const buffsAll=buffsBase+equip+rune+petPct;
+  const denom=Math.max(baseSpd*(1-quick)*fury,1e-9); const requiredTotal=1-(TARGET_FINAL/denom);
+  const requiredRemaining=Math.max(0, requiredTotal-buffsAll);
+  const finalRaw=baseSpd*(1-buffsAll)*(1-quick)*fury; const finalSpd=Math.max(finalRaw, TARGET_FINAL);
+  return {cls,weap,baseSpd,char,color,guild,secret,equip,rune,petPct,quick,fury,buffsBase,buffsAll,requiredTotal,requiredRemaining,finalSpd};
+}
+
+// Optimizer: Quicken as coverage; disallow Lv.3-5
+function planCombos(){
+  const s=currentState(false); const chosen=els.optSet.value; const pieceVal=SET_VAL[chosen]; if(!pieceVal) return [];
+  const denom0=Math.max(s.baseSpd*(1-0)*s.fury,1e-9);
+  const requiredTotal0=1-(TARGET_FINAL/denom0);
+  const need=Math.max(0, requiredTotal0 - s.buffsBase);
+  const pets=[{name:'S',v:0.12},{name:'A',v:0.09},{name:'B',v:0.06},{name:'None',v:0.00}];
+  const results=[];
+  for(let pieces=0; pieces<=MAX_EQUIP_PIECES; pieces++){
+    const equipPct=pieces*pieceVal;
+    for(let qLevel=0; qLevel<=2; qLevel++){ // 0..2 only
+      const q=qLevel/100;
+      for(let runePct=0.06; runePct>=-1e-9; runePct-=0.01){
+        const rFix=Math.max(0,runePct);
+        for(const pet of pets){
+          const coverage=equipPct + rFix + pet.v + q;
+          if(coverage + 1e-9 >= need){
+            const waste=coverage-need;
+            results.push({set:chosen,quickLevel:qLevel,pieces,equipPct,rune:Math.round(rFix*100),pet:pet.name,petV:pet.v,total:coverage,waste});
+            break;
+          }
+        }
+      }
+    }
+  }
+  results.sort((a,b)=>(a.pieces-b.pieces)||(a.quickLevel-b.quickLevel)||(b.rune-a.rune)||(b.petV-a.petV)||(a.waste-b.waste));
+  const uniq=[], seen=new Set();
+  for(const r of results){const k=`${r.set}|${r.quickLevel}|${r.pieces}|${r.rune}|${r.pet}`; if(!seen.has(k)){uniq.push(r); seen.add(k);} if(uniq.length>=7) break;}
+  return uniq;
+}
+
+const lineOf=r=>`${r.set}: ${r.pieces} piece${r.pieces===1?'':'s'} (${(r.equipPct*100).toFixed(2)}%)  |  Rune ${r.rune}%  |  Pet ${r.pet}  |  Quicken Lv.${r.quickLevel}`;
+let lastBest=null;
+
+function recalc(){
+  applyTheme();
+  const s=currentState(true);
+  if (s.cls==='Berserker'){furyRow?.classList.remove('hidden');} else {furyRow?.classList.add('hidden'); els.fury.checked=false; const b=document.getElementById('furyBtn'); b?.setAttribute('data-on','0'); b?.classList.remove('is-active'); if(b) b.textContent='Off';}
+  const progress=s.requiredTotal<=0?1:clamp((s.buffsAll)/s.requiredTotal,0,1);
+  document.getElementById('progressFill').style.width=(progress*100).toFixed(1)+'%';
+  const pbar=document.getElementById('pbar'); pbar.classList.remove('good','warn','hit'); if(progress>=1){pbar.classList.add('good','hit');} else if(progress>=0.9){pbar.classList.add('warn');}
+  document.getElementById('progressText').textContent=`Progress: ${(progress*100).toFixed(1)}% of required covered`;
+  els.requiredBox.value=(s.requiredRemaining*100).toFixed(2); els.finalBox.value=s.finalSpd.toFixed(2);
+  let plans=[]; try{plans=planCombos();}catch(e){console.error(e); plans=[];}
+  if(plans.length){ lastBest=plans[0]; els.bestLine.textContent=lineOf(lastBest)+`  → covers ${(lastBest.total*100).toFixed(2)}%`; els.bestWaste.textContent=`Waste overlap: ${(lastBest.waste*100).toFixed(2)}%`; els.altList.innerHTML=plans.slice(1,3).map(r=>`<li>${lineOf(r)} — waste ${(r.waste*100).toFixed(2)}%</li>`).join(''); }
+  else { lastBest=null; els.bestLine.textContent='No valid combo with Quicken ≤ Lv.2.'; els.bestWaste.textContent='—'; els.altList.innerHTML=''; }
+}
+
+function applyOptimal(){ if(!lastBest){alert('No optimal combo found yet.'); return;} els.equip.value=(lastBest.equipPct*100).toFixed(2); els.rune.value=String(lastBest.rune); const petMap={'None':'0','B':'6','A':'9','S':'12'}; els.pet.value=petMap[lastBest.pet]||'0'; els.quicken.value=String(lastBest.quickLevel); recalc(); }
+els.applyBest?.addEventListener('click', applyOptimal);
+
+function isEditableNumber(el){return el.tagName==='INPUT'&&el.type==='number'&&!el.readOnly}
+document.addEventListener('focusin', e=>{const el=e.target; if(!isEditableNumber(el))return; const v=(el.value||'').trim(); if(v===''||Number(v)===0) el.value=''; el.select();});
+document.addEventListener('focusout', e=>{const el=e.target; if(!isEditableNumber(el))return; if((el.value||'').trim()===''){ el.value='0'; recalc(); }});
+['input','change','click'].forEach(evt=>document.addEventListener(evt, e=>{ if(e.target.matches('input, select, button')) recalc(); }));
+recalc();
+</script>
+</body>
+</html>
