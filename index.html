@@ -137,7 +137,17 @@ footer{ position:fixed; bottom:0; left:0; width:100%;
         </div>
         <select id="cls" class="hidden"></select>
       </div>
-
+<div class="row">
+  <label>Focus</label>
+  <div class="seg" id="focusSeg">
+    <button type="button" data-val="DPS" class="is-active">DPS</button>
+    <button type="button" data-val="Tank">Tank</button>
+  </div>
+  <select id="focus" class="hidden">
+    <option value="DPS" selected>DPS</option>
+    <option value="Tank">Tank</option>
+  </select>
+</div>
       <div class="row">
         <label>Weapon</label>
         <div class="seg" id="weaponSeg">
