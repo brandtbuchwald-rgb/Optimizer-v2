@@ -388,5 +388,26 @@ document.addEventListener('focusout', e=>{const el=e.target; if(!isEditableNumbe
 recalc();
 </script>
   <script src="assets/gearOptimizer.js"></script>
+<script>
+  function renderGearSetFromUI(){
+    const tier = els.optSet.value;   // set selector you already have
+    const focus = els.focus.value;   // new focus selector
+    // remove old gear cards before drawing
+    document.querySelectorAll('.gear-card').forEach(el=>el.remove());
+    renderGearSet(tier, focus);
+  }
+
+  // re-render whenever set/focus changes
+  ['input','change','click'].forEach(evt =>
+    document.addEventListener(evt, e=>{
+      if(e.target.closest('#optSet') || e.target.closest('#focusSeg')) {
+        renderGearSetFromUI();
+      }
+    })
+  );
+
+  // initial render
+  renderGearSetFromUI();
+</script>
 </body>
 </html>
