@@ -15,6 +15,8 @@ const PURPLE_BY_SLOT = {
   Boots:    ["ATK% +26%"],
 };
 
+const CAP_STATS = ["ATK SPD","Crit Chance","Evasion"];
+
 function buildGearSet(tier, focus){
   const slots = ["Weapon","Necklace","Helm","Chest","Ring","Belt","Gloves","Boots"];
   const result = {};
@@ -22,11 +24,13 @@ function buildGearSet(tier, focus){
   slots.forEach(slot=>{
     let lines = [];
     let pool = [...NORMAL_POOL];
+
+    // Priorities differ by focus
     let priorities = (focus==="Tank")
       ? ["ATK SPD","Evasion","Damage Reduction","HP%","DEF%","ATK%","Crit DMG","Monster DMG"]
       : ["ATK SPD","Crit Chance","Evasion","ATK%","Crit DMG","Monster DMG","HP%","DEF%"];
 
-    // Normal line count
+    // Line counts
     let normalCount = tier==="Primal" ? 3 : 4;
 
     // Add purple if Chaos/Abyss
@@ -37,10 +41,21 @@ function buildGearSet(tier, focus){
       }
     }
 
-    // Fill normal lines by priority
+    // Weapons cannot have cap stats
+    let banned = (slot==="Weapon") ? CAP_STATS : [];
+
+    let capUsed = false;
     for (let stat of priorities){
       if (lines.length >= normalCount + (tier==="Chaos"||tier==="Abyss"?1:0)) break;
       if (!pool.includes(stat)) continue;
+      if (banned.includes(stat)) continue;
+
+      // only allow one cap stat
+      if (CAP_STATS.includes(stat)){
+        if (capUsed) continue;
+        capUsed = true;
+      }
+
       lines.push(stat);
       pool = pool.filter(s=>s!==stat);
     }
