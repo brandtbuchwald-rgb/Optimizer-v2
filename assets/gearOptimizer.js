@@ -21,20 +21,20 @@ function buildGearSet(tier, focus){
   const slots = ["Weapon","Necklace","Helm","Chest","Ring","Belt","Gloves","Boots"];
   const result = {};
 
-  let atkspdUsed = false; // track if we’ve already slotted ATK SPD anywhere
+  let atkspdUsed = false; // declare this before slots.forEach
 
 slots.forEach(slot=>{
   let lines = [];
   let pool = [...NORMAL_POOL];
 
-  // Tank vs DPS priorities
+  // priorities as before
   let priorities = (focus==="Tank")
     ? ["ATK SPD","Evasion","Damage Reduction","HP%","DEF%","ATK%","Crit DMG","Monster DMG"]
     : ["ATK SPD","Crit Chance","Evasion","ATK%","Crit DMG","Monster DMG","HP%","DEF%"];
 
   let normalCount = tier==="Primal" ? 3 : 4;
 
-  // Purple 5th line (Abyss/Chaos only)
+  // purple 5th
   if (tier==="Chaos"||tier==="Abyss") {
     let purple = PURPLE_BY_SLOT[slot] || [];
     if (purple.length) {
@@ -42,21 +42,23 @@ slots.forEach(slot=>{
     }
   }
 
-  // Weapons cannot roll cap stats
+  // cap rules
   let banned = (slot==="Weapon") ? CAP_STATS : [];
-
   let capUsed = false;
+
   for (let stat of priorities){
     if (lines.length >= normalCount + (tier==="Chaos"||tier==="Abyss"?1:0)) break;
     if (!pool.includes(stat)) continue;
     if (banned.includes(stat)) continue;
 
     // global ATK SPD limit
-    if (stat==="ATK SPD" && atkspdUsed) continue;
-    if (stat==="ATK SPD") atkspdUsed = true;
+    if (stat==="ATK SPD") {
+      if (atkspdUsed) continue;
+      atkspdUsed = true;
+    }
 
-    // one cap per piece
-    if (CAP_STATS.includes(stat)){
+    // per-piece cap rule
+    if (CAP_STATS.includes(stat)) {
       if (capUsed) continue;
       capUsed = true;
     }
