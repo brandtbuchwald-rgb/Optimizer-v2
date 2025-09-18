@@ -21,51 +21,52 @@ function buildGearSet(tier, focus){
   const slots = ["Weapon","Necklace","Helm","Chest","Ring","Belt","Gloves","Boots"];
   const result = {};
 
-  slots.forEach(slot=>{
-    let lines = [];
-    let pool = [...NORMAL_POOL];
+  let atkspdUsed = false; // track if we’ve already slotted ATK SPD anywhere
 
-    // Priorities differ by focus
-    let priorities = (focus==="Tank")
-      ? ["ATK SPD","Evasion","Damage Reduction","HP%","DEF%","ATK%","Crit DMG","Monster DMG"]
-      : ["ATK SPD","Crit Chance","Evasion","ATK%","Crit DMG","Monster DMG","HP%","DEF%"];
+slots.forEach(slot=>{
+  let lines = [];
+  let pool = [...NORMAL_POOL];
 
-    // Line counts
-    let normalCount = tier==="Primal" ? 3 : 4;
+  // Tank vs DPS priorities
+  let priorities = (focus==="Tank")
+    ? ["ATK SPD","Evasion","Damage Reduction","HP%","DEF%","ATK%","Crit DMG","Monster DMG"]
+    : ["ATK SPD","Crit Chance","Evasion","ATK%","Crit DMG","Monster DMG","HP%","DEF%"];
 
-    // Add purple if Chaos/Abyss
-    if (tier==="Chaos"||tier==="Abyss") {
-      let purple = PURPLE_BY_SLOT[slot] || [];
-      if (purple.length) {
-        lines.push(`<span style="background:#7c3aed;color:white;padding:2px 6px;border-radius:6px;font-size:12px">${purple[0]} (5th)</span>`);
-      }
+  let normalCount = tier==="Primal" ? 3 : 4;
+
+  // Purple 5th line (Abyss/Chaos only)
+  if (tier==="Chaos"||tier==="Abyss") {
+    let purple = PURPLE_BY_SLOT[slot] || [];
+    if (purple.length) {
+      lines.push(`<span style="background:#7c3aed;color:white;padding:2px 6px;border-radius:6px;font-size:12px">${purple[0]} (5th)</span>`);
+    }
+  }
+
+  // Weapons cannot roll cap stats
+  let banned = (slot==="Weapon") ? CAP_STATS : [];
+
+  let capUsed = false;
+  for (let stat of priorities){
+    if (lines.length >= normalCount + (tier==="Chaos"||tier==="Abyss"?1:0)) break;
+    if (!pool.includes(stat)) continue;
+    if (banned.includes(stat)) continue;
+
+    // global ATK SPD limit
+    if (stat==="ATK SPD" && atkspdUsed) continue;
+    if (stat==="ATK SPD") atkspdUsed = true;
+
+    // one cap per piece
+    if (CAP_STATS.includes(stat)){
+      if (capUsed) continue;
+      capUsed = true;
     }
 
-    // Weapons cannot have cap stats
-    let banned = (slot==="Weapon") ? CAP_STATS : [];
+    lines.push(stat);
+    pool = pool.filter(s=>s!==stat);
+  }
 
-    let capUsed = false;
-    for (let stat of priorities){
-      if (lines.length >= normalCount + (tier==="Chaos"||tier==="Abyss"?1:0)) break;
-      if (!pool.includes(stat)) continue;
-      if (banned.includes(stat)) continue;
-
-      // only allow one cap stat
-      if (CAP_STATS.includes(stat)){
-        if (capUsed) continue;
-        capUsed = true;
-      }
-
-      lines.push(stat);
-      pool = pool.filter(s=>s!==stat);
-    }
-
-    result[slot] = lines;
-  });
-
-  return result;
-}
-
+  result[slot] = lines;
+});
 // --- Render into page ---
 function renderGearSet(tier, focus){
   const plan = buildGearSet(tier, focus);
