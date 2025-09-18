@@ -403,11 +403,13 @@ recalc();
   ['input','change','click'].forEach(evt =>
     document.addEventListener(evt, e=>{
       if(
-        e.target.closest('#optSet') ||
-        e.target.closest('#focusSeg')
-      ){
-        renderGearSetFromUI();
-      }
+  e.target.closest('#optSetSeg') ||  // <- segment buttons for set
+  e.target.closest('#focusSeg') ||   // <- segment buttons for focus
+  e.target.closest('#optSet') ||     // <- hidden select fallback
+  e.target.closest('#focus')         // <- hidden select fallback
+){
+  renderGearSetFromUI();
+}
     })
   );
 </script>
